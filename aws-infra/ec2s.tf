@@ -1,7 +1,26 @@
 locals {
     base_init = <<-EOF
+    #!/bin/bash
     apt-get update
     apt-get upgrade -y
+EOF
+
+    nat_instance_init = <<-EOF
+    set -eux
+
+    apt-get install -y iptables-persistent
+
+    sysctl -w net.ipv4.ip_forward=1
+    echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/99-nat.conf
+    sysctl --system
+
+    PRIMARY_IFACE=$(ip route | awk '/default/ {print $5; exit}')
+
+    iptables -t nat -A POSTROUTING -o "$PRIMARY_IFACE" -j MASQUERADE
+    iptables -A FORWARD -i "$PRIMARY_IFACE" -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A FORWARD -o "$PRIMARY_IFACE" -j ACCEPT
+
+    netfilter-persistent save
 EOF
 }
 
