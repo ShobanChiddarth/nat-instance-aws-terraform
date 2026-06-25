@@ -56,6 +56,7 @@ resource "aws_instance" "nat_instance" {
     user_data = join("\n", [local.base_init]) # will ad remaining configuration later
     vpc_security_group_ids = [ aws_security_group.nat_instance_sg.id ]
     key_name = aws_key_pair.management_key_pair.key_name
+    source_dest_check = false
 
     tags = {
       "Name" = "NAT_instance"
