@@ -79,3 +79,4 @@ terraform.rc
 *.env
 !sample.env
 *.tfplan
+*.pem
