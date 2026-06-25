@@ -8,6 +8,11 @@ EOF
     nat_instance_init = <<-EOF
     set -eux
 
+    export DEBIAN_FRONTEND=noninteractive
+
+    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+
     apt-get install -y iptables-persistent
 
     sysctl -w net.ipv4.ip_forward=1
