@@ -52,7 +52,7 @@ resource "aws_instance" "nat_instance" {
     ami = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
     subnet_id = aws_subnet.ManagementSubnet.id
-    associate_public_ip_address = true
+    # associate_public_ip_address = true
     user_data = join("\n", [local.base_init]) # will ad remaining configuration later
     vpc_security_group_ids = [ aws_security_group.nat_instance_sg.id ]
     key_name = aws_key_pair.management_key_pair.key_name
@@ -61,4 +61,15 @@ resource "aws_instance" "nat_instance" {
     tags = {
       "Name" = "NAT_instance"
     }
+}
+
+resource "aws_eip" "nat_instance_eip" {
+     instance = aws_instance.nat_instance.id
+     domain = "vpc"
+
+     tags = {
+       "Name" = "nat_instance_eip"
+     }
+
+     depends_on = [ aws_internet_gateway.NatInstanceDemoIGW ]
 }
