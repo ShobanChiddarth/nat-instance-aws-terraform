@@ -65,6 +65,8 @@ After that, from the bastion, hop into the private instances using the managemen
 ssh -i aws-infra/.ssh/management_key_pair.pem ubuntu@<PEC21_or_PEC22_private_ip>
 ```
 
+Now check for internet connectivity.
+
 ## Notes
 
 - The NAT instance is intentionally a plain EC2 instance, not a managed NAT Gateway, to demonstrate the underlying mechanism (`ip_forward` + iptables `MASQUERADE`) at lower cost.
