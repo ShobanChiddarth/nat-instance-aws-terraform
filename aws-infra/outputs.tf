@@ -11,5 +11,5 @@ output "PEC21_private_ip" {
 }
 
 output "PEC22_private_ip" {
-    value = aws_instance.PEC22.public_ip
+    value = aws_instance.PEC22.private_ip
 }
