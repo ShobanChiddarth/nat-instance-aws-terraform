@@ -72,7 +72,7 @@ resource "aws_instance" "nat_instance" {
     instance_type = "t3.micro"
     subnet_id = aws_subnet.ManagementSubnet.id
     # associate_public_ip_address = true
-    user_data = join("\n", [local.base_init]) # will ad remaining configuration later
+    user_data = join("\n", [local.base_init, local.nat_instance_init])
     vpc_security_group_ids = [ aws_security_group.nat_instance_sg.id ]
     key_name = aws_key_pair.management_key_pair.key_name
     source_dest_check = false
