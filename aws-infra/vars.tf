@@ -1,7 +1,7 @@
 variable "region" {
     type = string
     description = "aws region"
-    default = "ap-south-2"
+    default = "ap-south-1"
 }
 
 variable "my_public_ip" {
