@@ -9,7 +9,7 @@ EOF
 resource "aws_instance" "bastion" {
     ami = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
-    subnet_id = aws_subnet.ManagementSubnet.id
+    subnet_id = var.management_subnet_id
     associate_public_ip_address = true
     user_data = local.base_init
     vpc_security_group_ids = [ aws_security_group.bastion_sg.id ]
@@ -23,7 +23,7 @@ resource "aws_instance" "bastion" {
 resource "aws_instance" "PEC21" {
     ami = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
-    subnet_id = aws_subnet.PrivateSubnet.id
+    subnet_id = var.private_subnet_id
     associate_public_ip_address = false
     user_data = local.base_init
     vpc_security_group_ids = [ aws_security_group.PEC2_sg.id ]
@@ -37,7 +37,7 @@ resource "aws_instance" "PEC21" {
 resource "aws_instance" "PEC22" {
     ami = data.aws_ami.ubuntu.id
     instance_type = "t3.micro"
-    subnet_id = aws_subnet.PrivateSubnet.id
+    subnet_id = var.private_subnet_id
     associate_public_ip_address = false
     user_data = local.base_init
     vpc_security_group_ids = [ aws_security_group.PEC2_sg.id ]

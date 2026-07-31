@@ -1,5 +1,5 @@
 resource "aws_security_group" "bastion_sg" {
-    vpc_id = aws_vpc.NatInstanceDemoVPC.id
+    vpc_id = var.vpc_id
     name = "bastion_sg"
     description = "allow SSH from my public IP"
 
@@ -20,7 +20,7 @@ resource "aws_security_group" "bastion_sg" {
 
 resource "aws_security_group" "PEC2_sg" {
     name = "PEC2_sg"
-    vpc_id = aws_vpc.NatInstanceDemoVPC.id
+    vpc_id = var.vpc_id
     description = "allow ssh from bastion"
 
     ingress {

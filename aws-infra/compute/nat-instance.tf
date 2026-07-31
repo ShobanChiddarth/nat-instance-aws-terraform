@@ -1,4 +1,4 @@
-# Modularise the whole NAT instance in a single EC2 for easy copy paste
+# Modularise the whole NAT instance in a singla .tf file
 
 # Dependencies
 # - Ubuntu AMI via `data.aws_ami.ubuntu.id`
@@ -35,7 +35,7 @@ EOF
 
 resource "aws_security_group" "nat_instance_sg" {
     name = "nat_instance_sg"
-    vpc_id = aws_vpc.NatInstanceDemoVPC.id
+    vpc_id = var.vpc_id
     description = "allow everything"
 
     ingress {
@@ -49,7 +49,7 @@ resource "aws_security_group" "nat_instance_sg" {
         from_port = 0
         to_port = 0
         protocol = "-1"
-        cidr_blocks = [ aws_vpc.NatInstanceDemoVPC.cidr_block ]
+        cidr_blocks = [ var.vpc_cidr_block ]
     }
 
     egress {
@@ -61,11 +61,10 @@ resource "aws_security_group" "nat_instance_sg" {
 }
 
 
-
 resource "aws_instance" "nat_instance" {
     ami = data.aws_ami.ubuntu.id # hard dependency
     instance_type = "t3.micro"
-    subnet_id = aws_subnet.ManagementSubnet.id
+    subnet_id = var.management_subnet_id
     # associate_public_ip_address = true
     user_data = local.nat_instance_init
     vpc_security_group_ids = [ aws_security_group.nat_instance_sg.id ]
@@ -85,5 +84,23 @@ resource "aws_eip" "nat_instance_eip" {
        "Name" = "nat_instance_eip"
      }
 
-     depends_on = [ aws_internet_gateway.NatInstanceDemoIGW ]
+    # depends_on = [ aws_internet_gateway.NatInstanceDemoIGW ] # make compute module depend on network module
+}
+
+
+resource "aws_route_table" "to_nat_instance" {
+    vpc_id = var.vpc_id
+
+    route {
+        cidr_block = "0.0.0.0/0"
+        network_interface_id = aws_instance.nat_instance.primary_network_interface_id
+    }
+
+    depends_on = [ aws_eip.nat_instance_eip ]
+}
+
+
+resource "aws_route_table_association" "private_to_nat_instance" {
+    subnet_id = var.private_subnet_id
+    route_table_id = aws_route_table.to_nat_instance.id
 }
